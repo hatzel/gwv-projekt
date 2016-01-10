@@ -33,9 +33,6 @@ class board:
     def valid_field(self, x, y):
         max_x = len(self.field[0]) - 1
         max_y = len(self.field) - 1
-        print(x, y)
-        print(max_x, max_y)
-        print("Valid field: ", x <= max_x and y <= max_y)
         return x <= max_x and y <= max_y and x >= 0 and y >= 0
 
     def switch_fields(self, pos_a, pos_b):
@@ -60,7 +57,6 @@ class board:
         return self.field < other.field
 
     def __hash__(self):
-        print(self.field)
         return self.get_state().__hash__()
 
     def up(self):
@@ -128,8 +124,6 @@ class BoardNode(ezgraph.Node):
         pass
 
 def compare(x):
-    print(board().field, " == ", x.state)
-    print(x.state.__class__.__name__)
     return x.state == board()
 
 def path_printer(path):
@@ -142,7 +136,7 @@ game_board = None
 if __name__ == '__main__':
     window = pyglet.window.Window()
     game_board = board()
-    game_board.shuffle()
+    game_board.down()
 
     graph = ezgraph.Graph(node_class=BoardNode)
     graph.add_node(game_board)
