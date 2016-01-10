@@ -1,16 +1,18 @@
 from queue import Queue, LifoQueue, PriorityQueue
 from functools import reduce
+from .node import Node
 
 class Graph():
     """Basic, undirected, weighted Graph."""
-    def __init__(self):
+    def __init__(self, node_class=Node):
+        self.node_type = node_class
         self.nodes = {}
 
     def add_node(self, identifier):
         """State identifier needs to be hashable, users of the graph should just identify
         states by their identifier and keep track of them this way. The identifier should represent the whole state.
         """
-        self.nodes[identifier] = _Node(identifier, self)
+        self.nodes[identifier] = self.node_type(identifier, self)
 
     def remove_node(self, identifier):
         del self.nodes[identifier]
@@ -46,7 +48,7 @@ class Graph():
         return list(self.nodes.keys())[item]
 
     def bfs(self, startstates, endstates,
-        endstate_condition=lambda x: False, _data_structure=Queue, heuristic=None, print_path=lambda x: False, test = True):
+        endstate_condition=lambda x: False, _data_structure=Queue, heuristic=None, print_path=lambda x: False, test=True):
         """Breadth first search algorithm on the graph.
         The endstate condition can be given to enable checking against very large sets of endstates.
         Start and endstates have to be iterables of the hashable states nodes were created with.
@@ -85,8 +87,8 @@ class Graph():
                     return [e.state for e in path]
                 visited.append(node)
                 print_path(path)
-
                 for c in node.get_children():
+                    print("child: ", c)
                     if astar:
                         # calculating cost of path
                         path_cost = self.get_path_length([e.state for e in path + [c]])
@@ -104,37 +106,3 @@ class Graph():
     def astar(self, startstates, endstates, print_path=lambda x: False, heuristic=lambda x, y: 0,test = True):
         return self.bfs(startstates, endstates, heuristic=heuristic,
             _data_structure=PriorityQueue, print_path=print_path,test = test)
-
-class _Node():
-    """Nodes should only be instansiated by the Graph."""
-    def __init__(self, identifier, graph):
-        self.graph = graph
-        self.state = identifier
-        self.children = {}
-
-    def __repr__(self):
-        return "Node({})".format(self.state)
-
-    def add_child(self, child, weight):
-        self.children[child] = weight
-
-    def get_child_weight(self, child):
-        return self.children[child]
-
-    def remove_child(self, child):
-        del self.children[child]
-
-    def __eq__(self, other):
-        return self.state == other.state
-
-    def __lt__(self, other):
-        return self.state < other.state
-
-    def __hash__(self):
-        return self.state.__hash__()
-
-    def get_children(self):
-        return [k for k,v in self.children.items() if v is not None]
-
-    def get_children_weights(self):
-        return [(k,v) for k,v in self.children.items() if v is not None]

@@ -4,6 +4,7 @@ from pyglet.window import key
 import numpy
 import random
 import ezgraph
+import copy
 
 FIELDS_LIST = list(range(1,16)) + [None]
 
@@ -48,6 +49,20 @@ class board:
         if self.valid_field(*switch_pos):
             self.switch_fields(empty_pos, switch_pos)
 
+    def __eq__(self, other):
+        if hasattr(other, 'field'):
+            return self.field == other.field
+        else:
+            return False
+
+    def __lt__(self, other):
+        #todo handle other types
+        return self.field < other.field
+
+    def __hash__(self):
+        print(self.field)
+        return self.get_state().__hash__()
+
     def up(self):
         self.move_to_empty(0, 1)
 
@@ -59,6 +74,9 @@ class board:
 
     def right(self):
         self.move_to_empty(-1, 0)
+
+    def get_state(self):
+        return tuple(map(tuple, self.field))
 
     def __repr__(self):
         return str(self.field)
@@ -75,6 +93,49 @@ def draw_square(center_pos, size):
         ('c4B', (153, 204, 255, 255) * 4)
     )
 
+class BoardNode(ezgraph.Node):
+    def __repr__(self):
+        return "Node({}<)".format(self.state)
+
+    def get_child_weight(self, child):
+        return 1
+
+    def __eq__(self, other):
+        if hasattr(other, 'state'):
+            return self.state == other.state
+        else:
+            return False
+        
+
+    def __lt__(self, other):
+        return self.state < other.state
+
+    def __hash__(self):
+        return self.state.__hash__()
+
+
+    def get_children(self):
+        copies = [copy.deepcopy(self.state) for _ in range(0,4)]
+        copies[0].up()
+        copies[1].down()
+        copies[2].left()
+        copies[3].right()
+        nodes = [BoardNode(c, self.graph) for c in copies]
+        print(nodes)
+        return nodes
+
+    def get_children_weights(self):
+        pass
+
+def compare(x):
+    print(board().field, " == ", x.state)
+    print(x.state.__class__.__name__)
+    return x.state == board()
+
+def path_printer(path):
+    print("PATH:")
+    for p in path:
+        print(p)
 
 window = None
 game_board = None
@@ -82,6 +143,12 @@ if __name__ == '__main__':
     window = pyglet.window.Window()
     game_board = board()
     game_board.shuffle()
+
+    graph = ezgraph.Graph(node_class=BoardNode)
+    graph.add_node(game_board)
+    
+    graph.bfs([game_board], [], endstate_condition=compare, print_path=path_printer)
+
     labels = {x: pyglet.text.Label(str(x), color=(0, 0, 0, 255),
         anchor_x="center", anchor_y="center") for x in FIELDS_LIST}
     @window.event
