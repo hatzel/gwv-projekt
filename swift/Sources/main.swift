@@ -1,10 +1,18 @@
 import FastRNG
 
-let r = FastRNG.defaultGenerator
+let r: RandomGenerator
 
 var solvedBoard = BoardState()
 
 var startBoard = solvedBoard
+
+
+// Commandline seed
+if Process.arguments.count > 1 {
+  r = Xorshift1024StarGenerator(seed: UInt64(Process.arguments[1], radix: 36)!)
+} else {
+  r = FastRNG.defaultGenerator
+}
 
 let directions: [BoardState.MoveDirection] = [.Up, .Down, .Left, .Right]
 for i in 0..<50000 {
@@ -64,8 +72,8 @@ queueLoop: while !q.isEmpty {
                 break queueLoop
             }
             let dist = next.sumOfManhattanDistancesTo(solvedBoard)
-            print(Repeat(count: dist, repeatedValue: "█").joinWithSeparator("") + " - \(dist)")
-            q.push(SearchNode(prio: dist, state: next, path: path))
+            // print(Repeat(count: dist, repeatedValue: "█").joinWithSeparator("") + " - \(dist)")
+            q.push(SearchNode(prio: dist + path.count, state: next, path: path))
         } catch { }
     }
 }
