@@ -6,9 +6,23 @@ extension Array {
     }
 }
 
+extension Array where Element: Hashable {
+    var hashValue: Int {
+        get {
+            var hash = 5381
+
+            for el in self {
+                hash = ((hash << 5) &+ hash) &+ el.hashValue
+            }
+
+            return hash
+        }
+    }
+}
+
 func ~= <T: Equatable>(lhs: [T], rhs: T) -> Bool { return lhs.contains(rhs) }
 
-struct BoardState: CustomStringConvertible {
+struct BoardState: CustomStringConvertible, Hashable {
     enum MoveDirection {
         case Up, Down, Left, Right
     }
@@ -31,24 +45,49 @@ struct BoardState: CustomStringConvertible {
         }
     }
 
-    func movingEmptyTile(direction: MoveDirection) throws -> BoardState {
-        let idx = indexOfEmpty
+    mutating func moveEmptyTile(direction: MoveDirection) throws {
+        let point = indexToPoint(indexOfEmpty)
         let mov: Int
-        switch (direction, idx) {
-        case (.Up, 4...15):
+        switch (direction, point) {
+        case (.Up, (_, 1...3)):
             mov = -4
-        case (.Down, 0...11):
+        case (.Down, (_, 0...2)):
             mov = 4
-        case (.Left, (0...15).filter { $0 % 4 != 0 }):
+        case (.Left, (1...3, _)):
             mov = -1
-        case (.Right, (0...15).filter { ($0 + 1) % 4 != 0 }):
+        case (.Right, (0...1, _)):
             mov = 1
         default:
             throw MoveError.OutOfBounds
         }
-        var next = self
-        swap(&next.array[indexOfEmpty], &next.array[indexOfEmpty + mov])
-        return next
+        
+        swap(&array[indexOfEmpty], &array[indexOfEmpty + mov])
+    }
+
+    func movingEmptyTile(direction: MoveDirection) throws -> BoardState {
+        var other = self
+        try other.moveEmptyTile(direction)
+        return other
+    }
+
+    private func indexToPoint(idx: Int) -> (Int, Int) {
+        let x = idx % 4
+        let y = (idx - x) / 4
+        return (x, y)
+    }
+
+    private func manhattanDistance(from from: (Int, Int), to: (Int, Int)) -> Int {
+        return abs(from.0 - to.0) + abs(from.1 - to.1)
+    }
+
+    func sumOfManhattanDistancesTo(other: BoardState) -> Int {
+        var sum = 0
+        for (idx, tile) in array.enumerate() {
+            let thisPos = indexToPoint(idx)
+            let otherPos = indexToPoint(other.array.indexOf(tile)!)
+            sum += manhattanDistance(from: thisPos, to: otherPos)
+        }
+        return sum
     }
 
     var description: String {
@@ -60,4 +99,12 @@ struct BoardState: CustomStringConvertible {
             return substrings.joinWithSeparator("\n")
         }
     }
+
+    var hashValue: Int {
+        return array.hashValue
+    }
+}
+
+func == (lhs: BoardState, rhs: BoardState) -> Bool {
+    return lhs.array == rhs.array
 }
