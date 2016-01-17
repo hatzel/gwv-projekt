@@ -9,10 +9,10 @@ var startBoard = solvedBoard
 
 // Commandline seed
 if Process.arguments.count > 1 {
-  r = Xorshift1024StarGenerator(seed: UInt64(Process.arguments[1], radix: 36)!)
-  print("Using seed: \(Process.arguments[1])")
+    r = Xorshift1024StarGenerator(seed: UInt64(Process.arguments[1], radix: 36)!)
+    print("Using seed: \(Process.arguments[1])")
 } else {
-  r = FastRNG.defaultGenerator
+    r = FastRNG.defaultGenerator
 }
 
 let directions: [BoardState.MoveDirection] = [.Up, .Down, .Left, .Right]
