@@ -25,6 +25,22 @@ func ~= <T: Equatable>(lhs: [T], rhs: T) -> Bool { return lhs.contains(rhs) }
 struct BoardState: CustomStringConvertible, Hashable {
     enum MoveDirection {
         case Up, Down, Left, Right
+
+        var description: String {
+            get {
+                switch self {
+                    case .Up:
+                        return "up"
+                    case .Down:
+                        return "down"
+                    case .Left:
+                        return "left"
+                    case .Right:
+                        return "right"
+                }
+            }
+        }
+
     }
 
     enum MoveError: ErrorType {
@@ -60,7 +76,7 @@ struct BoardState: CustomStringConvertible, Hashable {
         default:
             throw MoveError.OutOfBounds
         }
-        
+
         swap(&array[indexOfEmpty], &array[indexOfEmpty + mov])
     }
 
@@ -93,7 +109,7 @@ struct BoardState: CustomStringConvertible, Hashable {
     var description: String {
         get {
             let chunks = array.chunksOfSize(4)
-            let substrings = chunks.map { 
+            let substrings = chunks.map {
                 $0.map { $0 != 0 ? String($0, radix: 16) : " " }.joinWithSeparator("")
             }
             return substrings.joinWithSeparator("\n")

@@ -10,6 +10,7 @@ var startBoard = solvedBoard
 // Commandline seed
 if Process.arguments.count > 1 {
   r = Xorshift1024StarGenerator(seed: UInt64(Process.arguments[1], radix: 36)!)
+  print("Using seed: \(Process.arguments[1])")
 } else {
   r = FastRNG.defaultGenerator
 }
@@ -80,6 +81,8 @@ queueLoop: while !q.isEmpty {
 switch result {
     case .Found(let path):
         print("found path of length \(path.count)")
+        let strings: [String] = path.map{String($0)}
+        print("Move Sequence: " + strings.joinWithSeparator(", ") + ".")
     default:
         print("not found")
 }
