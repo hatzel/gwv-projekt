@@ -1,3 +1,5 @@
+import FastRNG
+
 extension Array {
     func chunksOfSize(size: Int) -> [ArraySlice<Element>] {
         return 0.stride(to: count, by: size).map {
@@ -25,6 +27,8 @@ func ~= <T: Equatable>(lhs: [T], rhs: T) -> Bool { return lhs.contains(rhs) }
 struct BoardState: CustomStringConvertible, Hashable {
     enum MoveDirection {
         case Up, Down, Left, Right
+
+        static var allDirections: [MoveDirection] = [.Up, .Down, .Left, .Right]
 
         var description: String {
             get {
@@ -84,6 +88,18 @@ struct BoardState: CustomStringConvertible, Hashable {
         var other = self
         try other.moveEmptyTile(direction)
         return other
+    }
+
+
+    func permutingBoard(steps steps: Int, random: RandomGenerator) -> BoardState {
+        var board = self
+        for _ in 0..<steps {
+            let d = random.sample(BoardState.MoveDirection.allDirections)
+            do {
+                try board.moveEmptyTile(d)
+            } catch {}
+        }
+        return board
     }
 
     private func indexToPoint(idx: Int) -> (Int, Int) {
