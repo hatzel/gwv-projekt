@@ -1,33 +1,45 @@
+import Commander
 import FastRNG
 
-let r: RandomGenerator
-
-// Commandline seed
-if Process.arguments.count > 1 {
-    r = Xorshift1024StarGenerator(seed: UInt64(Process.arguments[1], radix: 36)!)
-    print("Using seed: \(Process.arguments[1])")
-} else {
-    r = FastRNG.defaultGenerator
+func preflightDebugOutput(target target: BoardState, start: BoardState) -> String {
+    let dist = start.sumOfManhattanDistancesTo(target)
+    var str = "--- target ---\n"
+    str += String(target)
+    str += "\n--- start ---\n"
+    str += String(start)
+    str += "\n--- distance ---\n"
+    str += String(dist)
+    return str
 }
 
-var solvedBoard = BoardState()
-var startBoard = solvedBoard.permutingBoard(steps: 50000, random: r)
-
-print("--- target ---")
-print(solvedBoard)
-print("--- start ---")
-print(startBoard)
-print("--- distance ---")
-let initialDistance = startBoard.sumOfManhattanDistancesTo(solvedBoard)
-print(initialDistance)
-
-let solver = BoardSolver(startBoard: startBoard, targetBoard: solvedBoard)
-
-switch solver.solve() {
+func resultOutputForResult(res: BoardSolver.SearchResult) -> String {
+    switch res {
     case .Found(let path):
-        print("found path of length \(path.count)")
-        let strings: [String] = path.map{String($0)}
-        print("Move Sequence: " + strings.joinWithSeparator(", ") + ".")
+        let str = "found path of length \(path.count)"
+        let strings: [String] = path.map { String($0) }
+        return str + "\n" + "Move Sequence: " + strings.joinWithSeparator(", ") + "."
     default:
-        print("not found")
+        return "not found"
+    }
 }
+
+let main = command(
+    Option("seed", "")
+) { seed in
+    let r: RandomGenerator
+
+    switch seed {
+    case "": r = FastRNG.defaultGenerator
+    case let s: r = Xorshift1024StarGenerator(seed: UInt64(s, radix: 36)!)
+    }
+
+    var solvedBoard = BoardState()
+    var startBoard = solvedBoard.permutingBoard(steps: 50000, random: r)
+    print(preflightDebugOutput(target: solvedBoard, start: startBoard))
+
+    let solver = BoardSolver(startBoard: startBoard, targetBoard: solvedBoard)
+
+    print(resultOutputForResult(solver.solve()))
+}
+
+main.run()
