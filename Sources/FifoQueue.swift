@@ -7,10 +7,10 @@ class Element<T> {
     }
 }
 
-class FifoQueue<T> {
-    var first: Element<T>?
-    var last: Element<T>?
-    func push(data: T) {
+struct FifoQueue<T> {
+    private var first: Element<T>?
+    private var last: Element<T>?
+    mutating func push(data: T) {
         guard first != nil else {
             first = Element(input: data)
             return
@@ -22,14 +22,36 @@ class FifoQueue<T> {
         }
         let append = Element(input: data)
         last!.next = append
+        self.last = append
     }
 
-    func pop() -> T? {
-        guard first != nil else {
-            return nil
-        }
+    func getlast() -> Element<T>? {
+        return self.last
+    }
+    mutating func pop() -> T? {
+        guard first != nil else {return nil}
         let data = first!.data
         first = first!.next
         return data
+    }
+
+    var isEmpty: Bool {
+        get {
+            return first == nil
+        }
+    }
+
+    var count: Int {
+        get {
+            guard first != nil else {return 0}
+            guard last != nil else {return 1}
+            var i = 2
+            var current = first!
+            while current.next !== self.last {
+                i += 1
+                current = current.next!
+            }
+            return i
+        }
     }
 }
