@@ -51,7 +51,7 @@ struct BoardState: CustomStringConvertible, Hashable {
         case OutOfBounds
     }
 
-    private var array: [Int]
+    private var array: [UInt8]
 
     init() {
         array = Array(0...15)

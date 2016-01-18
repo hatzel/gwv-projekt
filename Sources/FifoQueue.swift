@@ -48,6 +48,7 @@ struct FifoQueue<T> {
             var i = 2
             var current = first!
             while current.next !== self.last {
+                guard current.next != nil else {return i}
                 i += 1
                 current = current.next!
             }
