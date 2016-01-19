@@ -1,3 +1,4 @@
+import SlidingPuzzle
 import Commander
 import FastRNG
 
@@ -34,12 +35,31 @@ let main = command(
     }
 
     var solvedBoard = BoardState()
-    var startBoard = solvedBoard.permutingBoard(steps: 50000, random: r)
+
+    var startBoard = solvedBoard.permutingBoard(steps: 500, random: r)
     print(preflightDebugOutput(target: solvedBoard, start: startBoard))
 
     let solver = BoardSolver(startBoard: startBoard, targetBoard: solvedBoard)
 
-    print(resultOutputForResult(solver.solve()))
+    // print(resultOutputForResult(solver.solve()))
+
+
+    let res = solver.solve()
+
+
+
+    guard case .Found(let path) = res
+        else { fatalError("No result found") }
+
+    print(resultOutputForResult(res))
+
+    var boardToSolve = startBoard
+
+    for d in path {
+        print(boardToSolve)
+        print("--- \(d) ---")
+        try! boardToSolve.moveEmptyTile(d)
+    }
 }
 
 main.run()

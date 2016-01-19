@@ -24,13 +24,13 @@ extension Array where Element: Hashable {
 
 func ~= <T: Equatable>(lhs: [T], rhs: T) -> Bool { return lhs.contains(rhs) }
 
-struct BoardState: CustomStringConvertible, Hashable {
-    enum MoveDirection {
+public struct BoardState: CustomStringConvertible, Hashable {
+    public enum MoveDirection {
         case Up, Down, Left, Right
 
         static var allDirections: [MoveDirection] = [.Up, .Down, .Left, .Right]
 
-        var description: String {
+        public var description: String {
             get {
                 switch self {
                     case .Up:
@@ -47,14 +47,14 @@ struct BoardState: CustomStringConvertible, Hashable {
 
     }
 
-    enum MoveError: ErrorType {
+    public enum MoveError: ErrorType {
         case OutOfBounds
     }
 
-    private var array: [UInt8]
+    private var array: [Int]
 
-    init() {
-        array = Array(0...15)
+    public init() {
+        array = Array(1...15) + [0]
     }
 
     private var indexOfEmpty: Int {
@@ -65,7 +65,7 @@ struct BoardState: CustomStringConvertible, Hashable {
         }
     }
 
-    mutating func moveEmptyTile(direction: MoveDirection) throws {
+    public mutating func moveEmptyTile(direction: MoveDirection) throws {
         let point = indexToPoint(indexOfEmpty)
         let mov: Int
         switch (direction, point) {
@@ -75,7 +75,7 @@ struct BoardState: CustomStringConvertible, Hashable {
             mov = 4
         case (.Left, (1...3, _)):
             mov = -1
-        case (.Right, (0...1, _)):
+        case (.Right, (0...2, _)):
             mov = 1
         default:
             throw MoveError.OutOfBounds
@@ -91,7 +91,7 @@ struct BoardState: CustomStringConvertible, Hashable {
     }
 
 
-    func permutingBoard(steps steps: Int, random: RandomGenerator) -> BoardState {
+    public func permutingBoard(steps steps: Int, random: RandomGenerator) -> BoardState {
         var board = self
         for _ in 0..<steps {
             let d = random.sample(BoardState.MoveDirection.allDirections)
@@ -112,9 +112,10 @@ struct BoardState: CustomStringConvertible, Hashable {
         return abs(from.0 - to.0) + abs(from.1 - to.1)
     }
 
-    func sumOfManhattanDistancesTo(other: BoardState) -> Int {
+    public func sumOfManhattanDistancesTo(other: BoardState) -> Int {
         var sum = 0
         for (idx, tile) in array.enumerate() {
+            guard tile != 0 else { continue }
             let thisPos = indexToPoint(idx)
             let otherPos = indexToPoint(other.array.indexOf(tile)!)
             sum += manhattanDistance(from: thisPos, to: otherPos)
@@ -122,7 +123,7 @@ struct BoardState: CustomStringConvertible, Hashable {
         return sum
     }
 
-    var description: String {
+    public var description: String {
         get {
             let chunks = array.chunksOfSize(4)
             let substrings = chunks.map {
@@ -132,11 +133,11 @@ struct BoardState: CustomStringConvertible, Hashable {
         }
     }
 
-    var hashValue: Int {
+    public var hashValue: Int {
         return array.hashValue
     }
 }
 
-func == (lhs: BoardState, rhs: BoardState) -> Bool {
+public func == (lhs: BoardState, rhs: BoardState) -> Bool {
     return lhs.array == rhs.array
 }
