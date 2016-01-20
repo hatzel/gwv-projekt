@@ -28,7 +28,7 @@ public struct BoardState: CustomStringConvertible, Hashable {
     public enum MoveDirection {
         case Up, Down, Left, Right
 
-        static var allDirections: [MoveDirection] = [.Up, .Down, .Left, .Right]
+        public static var allDirections: [MoveDirection] = [.Up, .Down, .Left, .Right]
 
         public var description: String {
             get {
@@ -84,7 +84,7 @@ public struct BoardState: CustomStringConvertible, Hashable {
         swap(&array[indexOfEmpty], &array[indexOfEmpty + mov])
     }
 
-    func movingEmptyTile(direction: MoveDirection) throws -> BoardState {
+    public func movingEmptyTile(direction: MoveDirection) throws -> BoardState {
         var other = self
         try other.moveEmptyTile(direction)
         return other

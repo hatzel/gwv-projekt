@@ -1,5 +1,37 @@
 import Foundation
 
+public struct Pattern: Hashable {
+    var state: [UInt8]
+    var cost: UInt8?
+
+    public init(boardState: BoardState, relevantElements: [Int]) {
+        self.state = []
+        for x in relevantElements {
+            state.append(boardState.array[x])
+        }
+        self.cost = nil
+    }
+
+    // init()
+
+    public func serialize(cost: UInt8? = nil) -> UInt64 {
+        let pointer = UnsafeMutablePointer<UInt64>(self.state)
+        print(cost)
+        return UInt64(cost ?? self.cost ?? 0) | pointer[0] >> 8
+    }
+
+    public var hashValue: Int {
+        get {
+            return state.hashValue
+        }
+    }
+}
+
+public func ==(lhs: Pattern, rhs: Pattern) -> Bool {
+    return lhs.state == rhs.state
+}
+
+
 public class PatternDatabase {
     var dataArray: [UInt64]
 

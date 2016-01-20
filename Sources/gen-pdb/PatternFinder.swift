@@ -1,4 +1,5 @@
 import Foundation
+import SlidingPuzzle
 
 struct PatternSearchNode: Hashable {
     let cost: UInt8
@@ -14,40 +15,6 @@ struct PatternSearchNode: Hashable {
 func ==(lhs: PatternSearchNode, rhs: PatternSearchNode) -> Bool {
     return lhs.state == rhs.state && lhs.cost == rhs.cost
 }
-
-public struct Pattern: Hashable {
-    var state: [UInt8]
-    var cost: UInt8?
-
-    init(boardState: BoardState, relevantElements: [Int]) {
-        self.state = []
-        for x in relevantElements {
-            state.append(boardState.array[x])
-        }
-        self.cost = nil
-    }
-
-    // init()
-
-    func serialize(cost: UInt8? = nil) -> UInt64 {
-        let pointer = UnsafeMutablePointer<UInt64>.alloc(1)
-        defer { pointer.dealloc(1) }
-        let smallp = UnsafeMutablePointer<UInt8>(pointer)
-        smallp[0] = cost ?? self.cost ?? 0
-        return pointer[0]
-    }
-
-    public var hashValue: Int {
-        get {
-            return state.hashValue
-        }
-    }
-}
-
-public func ==(lhs: Pattern, rhs: Pattern) -> Bool {
-    return lhs.state == rhs.state
-}
-
 
 
 public class PatternFinder {
@@ -83,9 +50,9 @@ public class PatternFinder {
             for dir in BoardState.MoveDirection.allDirections {
                 do {
                     i += 1
-                    if i % 10000 == 0 {
+                    if i % 100_000 == 0 {
                         print("iteration: \(i), queue size: \(q.count), Patterns found \(results.count)")
-                        if results.count > 10000 {
+                        if results.count > 1_000_000 {
                             break queueLoop
                         }
                     }
@@ -108,6 +75,7 @@ public class PatternFinder {
             return pattern.serialize(cost)
         }
         packed_results = packed_results.sort()
+        print(packed_results)
         packed_results.withUnsafeMutableBufferPointer({ (inout data: UnsafeMutableBufferPointer<UInt64>) in
             let dataObject = NSData(bytesNoCopy: data.baseAddress, length: data.count * sizeof(UInt64))
             do {
@@ -120,6 +88,3 @@ public class PatternFinder {
         return results
     }
 }
-
-// let pf = PatternFinder(startBoard: BoardState())
-// pf.search()
