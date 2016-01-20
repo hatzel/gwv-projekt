@@ -38,8 +38,12 @@ public class BoardSolver {
         let initialDistance = startBoard.sumOfManhattanDistancesTo(targetBoard)
         var q = PriorityQueue(ascending: true, startingValues: [SearchNode(prio: initialDistance, state: startBoard, path: [])])
         var visited: Set<BoardState> = [startBoard]
-        let pdb = try! PatternDatabase(filename: "test.data")
-
+        let pdb: PatternDatabase
+        do {
+             pdb = try PatternDatabase(filename: "test.data")
+        } catch {
+            fatalError("No Pattern Database exists")
+        }
         print("tested nodes: 1", terminator: "")
 
         queueLoop: while !q.isEmpty {
