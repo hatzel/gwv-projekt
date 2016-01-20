@@ -118,7 +118,7 @@ public class PatternFinder {
         }
         packed_results = packed_results.sort()
         packed_results.withUnsafeMutableBufferPointer({ (inout data: UnsafeMutableBufferPointer<UInt64>) in
-            let dataObject = NSData(bytesNoCopy: data.baseAddress, length: data.count * 8)
+            let dataObject = NSData(bytesNoCopy: data.baseAddress, length: data.count * sizeof(UInt64))
             do {
                 try dataObject.writeToFile("test.data", options: NSDataWritingOptions.DataWritingWithoutOverwriting)
             } catch {
