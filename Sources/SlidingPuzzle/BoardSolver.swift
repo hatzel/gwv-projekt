@@ -38,6 +38,7 @@ public class BoardSolver {
         let initialDistance = startBoard.sumOfManhattanDistancesTo(targetBoard)
         var q = PriorityQueue(ascending: true, startingValues: [SearchNode(prio: initialDistance, state: startBoard, path: [])])
         var visited: Set<BoardState> = [startBoard]
+        let pdb = try! PatternDatabase(filename: "test.data")
 
         print("tested nodes: 1", terminator: "")
 
@@ -48,7 +49,7 @@ public class BoardSolver {
             for dir in BoardState.MoveDirection.allDirections {
                 do {
                     let next = try state.movingEmptyTile(dir)
-                    
+
                     guard !visited.contains(next) else { continue }
                     visited.insert(next)
 
@@ -63,7 +64,10 @@ public class BoardSolver {
                     }
 
                     let path = node.path + [dir]
-                    let dist = next.sumOfManhattanDistancesTo(targetBoard)
+                    var dist = next.sumOfManhattanDistancesTo(targetBoard)
+                    if let pdb_heuristic = pdb.search(Pattern(boardState: next, relevantElements: [3,7,11,12,13,14,15])) {
+                        dist = max(dist, Int(pdb_heuristic))
+                    }
                     // print(Repeat(count: dist, repeatedValue: "█").joinWithSeparator("") + " - \(dist)")
                     q.push(SearchNode(prio: dist + path.count, state: next, path: path))
                 } catch { }

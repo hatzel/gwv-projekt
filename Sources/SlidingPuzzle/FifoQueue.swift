@@ -56,3 +56,17 @@ struct FifoQueue<T> {
         }
     }
 }
+
+// var q = FifoQueue<Int>()
+// q.push(1)
+// q.push(2)
+// q.push(3)
+// q.push(4)
+// q.push(5)
+// q.push(6)
+// print(q.getlast()!)
+// print("Size: \(q.count)")
+// for i in 1...6 {
+//     print(q.pop()!)
+// }
+//

@@ -125,3 +125,6 @@ public class PatternFinder {
         return results
     }
 }
+
+// let pf = PatternFinder(startBoard: BoardState())
+// pf.search()
