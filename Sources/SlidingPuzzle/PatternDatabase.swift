@@ -21,17 +21,17 @@ public class PatternDatabase {
         if slice.count == 0 {
             return nil
         }
-        let middleValue = slice[slice.count / 2]
+        let middleValue = slice[slice.startIndex + slice.count / 2]
         let pattern = inPattern >> 8
         let compareValue = middleValue >> 8
         if compareValue == pattern {
             return UInt8(truncatingBitPattern: middleValue)
         }
         else if compareValue > pattern{
-            return binarySearch(pattern: inPattern, slice: slice[0..<(slice.count / 2)])
+            return binarySearch(pattern: inPattern, slice: slice[slice.startIndex..<slice.startIndex + (slice.count / 2)])
         }
         else {
-            return binarySearch(pattern: inPattern, slice: slice[(slice.count / 2)+1..<slice.count])
+            return binarySearch(pattern: inPattern, slice: slice[slice.startIndex + (slice.count / 2) + 1..<slice.startIndex + slice.count])
         }
     }
 }
