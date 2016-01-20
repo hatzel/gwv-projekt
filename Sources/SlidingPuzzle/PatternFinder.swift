@@ -30,8 +30,8 @@ public struct Pattern: Hashable {
     // init()
 
     func serialize(cost: UInt8? = nil) -> UInt64 {
-        let pointer = UnsafePointer<UInt64>.alloc(1)
-        defer { pointer.dealloc() }
+        let pointer = UnsafeMutablePointer<UInt64>.alloc(1)
+        defer { pointer.dealloc(1) }
         let smallp = UnsafeMutablePointer<UInt8>(pointer)
         smallp[0] = cost ?? self.cost ?? 0
         return pointer[0]
