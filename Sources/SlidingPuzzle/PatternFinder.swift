@@ -30,17 +30,13 @@ public struct Pattern: Hashable {
     // init()
 
     func serialize(cost: UInt8? = nil) -> UInt64 {
-        var r: UInt64 = 0
-        var shift: UInt64 = 7
-        for x in state[0...6] {
-            r |= UInt64(x) << (shift * 8)
-            shift -= 1
-        }
+        let pointer: UnsafePointer<UInt64> = UnsafePointer<UInt64>(state)
+        let r = pointer[0] << 8
         switch (cost, self.cost) {
             case (.Some, _):
-                return r | UInt64(cost!)
+                return r | UInt64(cost!) << 56
             case (_, .Some):
-                return r | UInt64(self.cost!)
+                return r | UInt64(self.cost!) << 56
             default:
                 return r
         }
