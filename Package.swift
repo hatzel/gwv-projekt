@@ -6,6 +6,9 @@ let package = Package(
         Target(
             name: "puzzler",
             dependencies: [.Target(name: "SlidingPuzzle")]),
+        Target(
+            name: "gen-pdb",
+            dependencies: [.Target(name: "SlidingPuzzle")]),
         Target(name: "SlidingPuzzle")
     ],
     dependencies: [
