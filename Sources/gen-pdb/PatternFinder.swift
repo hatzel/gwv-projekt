@@ -55,7 +55,7 @@ public class PatternFinder {
                         if results.count > size {
                             break queueLoop
                         }
-                        print("\u{1b}[2K\rIteration: \(i), Queue size: \(q.count), Patterns found: \(results.count)", terminator: "")
+                        print("\u{1b}[2K\rIteration: \(i), Patterns found: \(results.count)", terminator: "")
                         fflush(stdout)
                     }
                     let next = try state.movingEmptyTile(dir)
@@ -63,11 +63,7 @@ public class PatternFinder {
                     visited.insert(next)
 
                     let pattern = Pattern(boardState: next, relevantElements: [0,1,2,3,4,8,12])
-                    if let currentMin = results[pattern] {
-                        results[pattern] = min(currentMin, cost + 1)
-                    } else {
-                        results[pattern] = cost + 1
-                    }
+                    results[pattern] = cost + 1
 
                     q.push(PatternSearchNode(cost: cost + 1, state: next))
                 } catch { }

@@ -70,9 +70,9 @@ public class BoardSolver {
                     let path = node.path + [dir]
                     var dist = next.sumOfManhattanDistancesTo(targetBoard)
                     if let pdb_heuristic = pdb.search(Pattern(boardState: next, relevantElements: [0,1,2,3,4,8,12])) {
-                        if Int(pdb_heuristic) > dist {
-                            print("MD: \(dist), pdb: \(pdb_heuristic)")
-                        }
+                        // if Int(pdb_heuristic) > dist {
+                        //     print("MD: \(dist), pdb: \(pdb_heuristic)")
+                        // }
                         dist = max(dist, Int(pdb_heuristic))
                     }
                     // print(Repeat(count: dist, repeatedValue: "█").joinWithSeparator("") + " - \(dist)")
