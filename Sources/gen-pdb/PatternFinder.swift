@@ -1,6 +1,7 @@
 import Foundation
 import SlidingPuzzle
 import Glibc
+import SimpleQueue
 
 struct PatternSearchNode: Hashable {
     let cost: UInt8
