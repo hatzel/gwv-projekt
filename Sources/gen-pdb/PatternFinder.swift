@@ -34,7 +34,7 @@ public class PatternFinder {
         return false
     }
 
-    public func search() -> Dictionary<Pattern, UInt8> {
+    public func search() {
         var q = FifoQueue<PatternSearchNode>()
         q.push(PatternSearchNode(cost: 0, state: self.startBoard))
         var visited: Set<BoardState> = [startBoard]
@@ -52,7 +52,7 @@ public class PatternFinder {
                     i += 1
                     if i % 100_000 == 0 {
                         print("iteration: \(i), queue size: \(q.count), Patterns found \(results.count)")
-                        if results.count > 1_000_000 {
+                        if results.count > 100_000 {
                             break queueLoop
                         }
                     }
@@ -75,7 +75,6 @@ public class PatternFinder {
             return pattern.serialize(cost)
         }
         packed_results = packed_results.sort()
-        print(packed_results)
         packed_results.withUnsafeMutableBufferPointer({ (inout data: UnsafeMutableBufferPointer<UInt64>) in
             let dataObject = NSData(bytesNoCopy: data.baseAddress, length: data.count * sizeof(UInt64))
             do {
@@ -84,7 +83,5 @@ public class PatternFinder {
                 fatalError("Can't write Pattern Database to File")
             }
         })
-
-        return results
     }
 }
