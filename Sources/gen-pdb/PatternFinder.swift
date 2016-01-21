@@ -35,7 +35,7 @@ public class PatternFinder {
         return false
     }
 
-    public func search() {
+    public func search(size: Int) {
         var q = FifoQueue<PatternSearchNode>()
         q.push(PatternSearchNode(cost: 0, state: self.startBoard))
         var visited: Set<BoardState> = [startBoard]
@@ -52,7 +52,7 @@ public class PatternFinder {
                 do {
                     i += 1
                     if i % 100_000 == 0 {
-                        if results.count > 100_000 {
+                        if results.count > size {
                             break queueLoop
                         }
                         print("\u{1b}[2K\rIteration: \(i), Queue size: \(q.count), Patterns found: \(results.count)", terminator: "")
