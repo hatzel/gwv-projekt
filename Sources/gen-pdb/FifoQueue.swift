@@ -3,7 +3,22 @@ class Element<T> {
     var next: Element<T>?
     init(input: T) {
         data = input
-        next = nil
+    }
+
+    deinit {
+        // try to avoid deep recursion in deinit by tearing down the rest of the
+        // list ourselves if it's uniquely referenced
+        while isUniquelyReferencedNonObjC(&next) {
+            // we hold the only pointer to next, lets tear it down
+            let temp = next
+            next = temp?.next
+            temp?.next = nil
+            // temp no longer has a tail, so when it deinits it won't recurse
+            // and if our new next is still uniquely referenced, we'll keep
+            // tearing it down. Otherwise, we'll break, next will be released,
+            // but it won't recurse because something else will be keeping it
+            // alive.
+        }
     }
 }
 
