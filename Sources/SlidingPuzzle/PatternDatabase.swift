@@ -17,11 +17,12 @@ public struct Pattern: Hashable {
     public func serialize(cost: UInt8? = nil) -> UInt64 {
         let pointer = UnsafeMutablePointer<UInt8>.alloc(8)
         for (i, x) in self.state.enumerate() {
-            pointer[i] = x
+            pointer[i + 1] = x
         }
         let long_pointer = UnsafeMutablePointer<UInt64>(pointer)
         defer { long_pointer.dealloc(1) }
-        return UInt64(cost ?? self.cost ?? 0) | long_pointer[0] >> 8
+        // print("state: \(self.state), cost: \(cost!), serialized: \(UInt64(cost ?? self.cost ?? 0) | long_pointer[0] >> 8)")
+        return UInt64(cost ?? self.cost ?? 0) | long_pointer[0]
     }
 
     public var hashValue: Int {
