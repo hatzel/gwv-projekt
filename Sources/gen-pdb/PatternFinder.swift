@@ -77,8 +77,9 @@ public class PatternFinder {
         packed_results.withUnsafeMutableBufferPointer({ (inout data: UnsafeMutableBufferPointer<UInt64>) in
             let dataObject = NSData(bytesNoCopy: data.baseAddress, length: data.count * sizeof(UInt64))
             do {
-                try dataObject.writeToFile("test.data", options: NSDataWritingOptions.DataWritingWithoutOverwriting)
+                try dataObject.writeToFile("test.data", options: [NSDataWritingOptions.DataWritingAtomic])
             } catch {
+                print(error)
                 fatalError("Can't write Pattern Database to File")
             }
         })
