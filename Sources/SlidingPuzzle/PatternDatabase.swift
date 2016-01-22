@@ -1,5 +1,7 @@
 import Foundation
 
+public typealias PackedPattern = UInt64
+
 public struct Pattern: Hashable {
     var state: [UInt8]
     var cost: UInt8?
@@ -23,6 +25,12 @@ public struct Pattern: Hashable {
         defer { long_pointer.dealloc(1) }
         // print("state: \(self.state), cost: \(cost!), serialized: \(UInt64(cost ?? self.cost ?? 0) | long_pointer[0] >> 8)")
         return UInt64(cost ?? self.cost ?? 0) | long_pointer[0]
+    }
+
+    public var packed: PackedPattern {
+        get {
+            return self.serialize()
+        }
     }
 
     public var hashValue: Int {

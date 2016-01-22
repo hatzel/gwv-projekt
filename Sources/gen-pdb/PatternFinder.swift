@@ -5,7 +5,7 @@ import SimpleQueue
 
 struct PatternSearchNode: Hashable {
     let cost: UInt8
-    let state: BoardState
+    let state: PackedBoardState
 
     var hashValue: Int {
         get {
@@ -38,13 +38,13 @@ public class PatternFinder {
 
     public func search(size: Int) {
         var q = FifoQueue<PatternSearchNode>()
-        q.push(PatternSearchNode(cost: 0, state: self.startBoard))
-        var visited: Set<BoardState> = [startBoard]
-        var results: Dictionary<Pattern, UInt8> = [:]
+        q.push(PatternSearchNode(cost: 0, state: self.startBoard.packed))
+        var visited: Set<PackedBoardState> = [startBoard.packed]
+        var results: Dictionary<PackedPattern, UInt8> = [:]
         var i = 0
         queueLoop: while !q.isEmpty {
             let node = q.pop()!
-            let state = node.state
+            let state = BoardState(packed: node.state)
             let cost = node.cost
             // print(">>> processing state:")
             // print(state)
@@ -56,22 +56,22 @@ public class PatternFinder {
                         if results.count > size {
                             break queueLoop
                         }
-                        print("\u{1b}[2K\rIteration: \(i), Patterns found: \(results.count)", terminator: "")
+                        print("\u{1b}[2K\rIteration: \(i), Queue size: \(q.count) Patterns found: \(results.count), Visited: \(visited.count)", terminator: "")
                         fflush(stdout)
                     }
                     let next = try state.movingEmptyTile(dir)
-                    guard !visited.contains(next) else { continue }
-                    visited.insert(next)
+                    guard !visited.contains(next.packed) else { continue }
+                    visited.insert(next.packed)
 
-                    let pattern = Pattern(boardState: next, relevantElements: [0,1,2,3,4,8,12])
+                    let pattern = Pattern(boardState: next, relevantElements: [0,1,2,3,4,8,12]).packed
                     results[pattern] = cost + 1
 
-                    q.push(PatternSearchNode(cost: cost + 1, state: next))
+                    q.push(PatternSearchNode(cost: cost + 1, state: next.packed))
                 } catch { }
             }
         }
-        var packed_results = results.map {(pattern: Pattern, cost: UInt8)-> UInt64 in
-            return pattern.serialize(cost)
+        var packed_results = results.map {(pattern: PackedPattern, cost: UInt8)-> UInt64 in
+            return UInt64(cost) | pattern
         }
         packed_results = packed_results.sort()
         packed_results.withUnsafeMutableBufferPointer({ (inout data: UnsafeMutableBufferPointer<UInt64>) in

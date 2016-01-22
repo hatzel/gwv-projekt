@@ -8,6 +8,8 @@ extension Array {
     }
 }
 
+public typealias PackedBoardState = UInt64
+
 extension Array where Element: Hashable {
     var hashValue: Int {
         get {
@@ -55,6 +57,14 @@ public struct BoardState: CustomStringConvertible, Hashable {
 
     public init() {
         array = Array(1...15) + [0]
+    }
+
+    public init(packed: PackedBoardState) {
+        // packed &= 0xFFFFFFFFFFFFFFF0
+        self.array = []
+        for i in 0...15 {
+            self.array.append(UInt8(packed >> UInt64(4 * i) & 0x000000000000000F))
+        }
     }
 
     private var indexOfEmpty: Int {
@@ -135,6 +145,14 @@ public struct BoardState: CustomStringConvertible, Hashable {
 
     public var hashValue: Int {
         return array.hashValue
+    }
+
+    public var packed: PackedBoardState {
+        var ret: PackedBoardState = 0
+        for (i, x) in self.array.enumerate() {
+            ret |= PackedBoardState(x) << UInt64(4 * i)
+        }
+        return ret
     }
 }
 
