@@ -36,10 +36,10 @@ public class PatternFinder {
         return false
     }
 
-    public func search(size: Int) {
-        var q = FifoQueue<PatternSearchNode>()
+    public func search(size: Int=0, depth: Int=0) {
+        var q = Stack<PatternSearchNode>()
         q.push(PatternSearchNode(cost: 0, state: self.startBoard.packed))
-        var visited: Set<PackedBoardState> = [startBoard.packed]
+        // var visited: Set<PackedBoardState> = [startBoard.packed]
         var results: Dictionary<PackedPattern, UInt8> = [:]
         var i = 0
         queueLoop: while !q.isEmpty {
@@ -56,15 +56,18 @@ public class PatternFinder {
                         if results.count > size {
                             break queueLoop
                         }
-                        print("\u{1b}[2K\rIteration: \(i), Queue size: \(q.count) Patterns found: \(results.count), Visited: \(visited.count)", terminator: "")
+                        print("\u{1b}[2K\rIteration: \(i), Queue size: \(q.count) Patterns found: \(results.count)", terminator: "")
                         fflush(stdout)
                     }
                     let next = try state.movingEmptyTile(dir)
-                    guard !visited.contains(next.packed) else { continue }
-                    visited.insert(next.packed)
+                    // guard !visited.contains(next.packed) else { continue }
+                    // visited.insert(next.packed)
 
+                    guard cost < 35 else { continue }
                     let pattern = Pattern(boardState: next, relevantElements: [0,1,2,3,4,8,12]).packed
-                    results[pattern] = cost + 1
+
+
+                    results[pattern] = min(results[pattern] ?? UInt8.max, cost + 1)
 
                     q.push(PatternSearchNode(cost: cost + 1, state: next.packed))
                 } catch { }
@@ -77,9 +80,8 @@ public class PatternFinder {
         packed_results.withUnsafeMutableBufferPointer({ (inout data: UnsafeMutableBufferPointer<UInt64>) in
             let dataObject = NSData(bytesNoCopy: data.baseAddress, length: data.count * sizeof(UInt64))
             do {
-                try dataObject.writeToFile("test.data", options: [NSDataWritingOptions.DataWritingAtomic])
+                try dataObject.writeToFile("test.data", options: [NSDataWritingOptions.DataWritingWithoutOverwriting])
             } catch {
-                print(error)
                 fatalError("Can't write Pattern Database to File")
             }
         })
