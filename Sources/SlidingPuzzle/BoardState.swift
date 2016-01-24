@@ -67,6 +67,14 @@ public struct BoardState: CustomStringConvertible, Hashable {
         }
     }
 
+    public init(array: [UInt8]) {
+        guard array.count == 16 else { fatalError() }
+        for num in 0...15 {
+            guard array.contains(UInt8(num)) else { fatalError("puzzle doesn't contain \(num)") }
+        }
+        self.array = array
+    }
+
     private var indexOfEmpty: Int {
         get {
             guard let idx = array.indexOf(0)
