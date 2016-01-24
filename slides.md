@@ -68,6 +68,7 @@
   * Additive
   * Non additive
 
+
 ## Creation
 * We search from goal node and store found patterns
 * Creation is very space intensive
@@ -76,6 +77,7 @@
     * Queue size was still getting to large
   * We chose to go with DFS up to a specified depth
     * Slower but takes less space
+
 
 ## Reading Databases
 * A database containing 16!/9! ~ 57,000,000 items is ~450MB large
