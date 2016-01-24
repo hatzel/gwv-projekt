@@ -25,8 +25,9 @@ func resultOutputForResult(res: BoardSolver.SearchResult) -> String {
 }
 
 let main = command(
-    Option("seed", "")
-) { seed in
+    Option("seed", ""),
+    Option("puzzle", "")
+) { seed, puzzle in
     let r: RandomGenerator
 
     switch seed {
@@ -36,7 +37,18 @@ let main = command(
 
     var solvedBoard = BoardState()
 
-    var startBoard = solvedBoard.permutingBoard(steps: 500, random: r)
+
+
+    var startBoard: BoardState
+
+    if puzzle == "" {
+        startBoard = solvedBoard.permutingBoard(steps: 500, random: r)
+    } else {
+        let parts = puzzle.characters.map { UInt8(String($0), radix: 16)! }
+        startBoard = BoardState(array: Array(parts))
+    }
+
+
     print(preflightDebugOutput(target: solvedBoard, start: startBoard))
 
     let solver = BoardSolver(startBoard: startBoard, targetBoard: solvedBoard)
