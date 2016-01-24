@@ -62,7 +62,7 @@
 
 
 
-## Pattern Databases
+## Pattern Databases (PDBs)
 * Used as improved heuristic for A*
 * Minimum steps needed from a given set of nodes to get to goal node
   * Additive
@@ -80,10 +80,17 @@
 
 
 ## Reading Databases
-* A database containing 16!/9! ~ 57,000,000 items is ~450MB large
+* A database containing 16!/9! ~ 57,000,000 items is ~450MB in size
 * We load the database into RAM at startup
 * Binary Search to find the costs corresponding to a state
+  * Very fast
+  * O(log(n))
 
+
+## Outlook
+* Parallelization
+* Additive PDBs
+* Larger PDBs
 
 
 ## Parallelize
@@ -94,3 +101,7 @@
 * Issues:
   * Memory usage
   * Locking due to shared data-structures
+
+## Benchmarks
+* We solve puzzles in an average time of:
+    TO BE DONE
