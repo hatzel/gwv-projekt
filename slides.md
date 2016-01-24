@@ -7,7 +7,7 @@
 * Algorithms
 * Implementation
 * Pattern Databases
-* Parralelism
+* Parallelism
 * Outlook/Conclusion
 
 
@@ -20,6 +20,7 @@
 
 ## BFS
 * Very slow
+* Memory intensive
 
 
 ##  A*
@@ -38,9 +39,10 @@
 
 ## Implementation
 * We chose Swift over Python
-  * Faste
+  * Faster
   * not as memory-hungry
-* No prallelism
+  * No true parallelism in Python
+  * Learn a fun new language!
 
 
 
@@ -57,6 +59,28 @@
 * 'packing' board states
   * One board state is an integer (64-bit)
   * This way we save a lot of memory
+
+
+
+## Pattern Databases
+* Used as improved heuristic for A*
+* Minimum steps needed from a given set of nodes to get to goal node
+  * Additive
+  * Non additive
+
+## Creation
+* We search from goal node and store found patterns
+* Creation is very space intensive
+  * Optimization wouldn't enable us to use BFS
+    * We managed to cut memory usage in half
+    * Queue size was still getting to large
+  * We chose to go with DFS up to a specified depth
+    * Slower but takes less space
+
+## Reading Databases
+* A database containing 16!/9! ~ 57,000,000 items is ~450MB large
+* We load the database into RAM at startup
+* Binary Search to find the costs corresponding to a state
 
 
 
