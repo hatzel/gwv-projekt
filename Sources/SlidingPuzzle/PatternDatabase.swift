@@ -6,10 +6,10 @@ public struct Pattern: Hashable {
     var state: [UInt8]
     var cost: UInt8?
 
-    public init(boardState: BoardState, relevantElements: [Int]) {
+    public init(boardState: BoardState, relevantElements: [UInt8]) {
         self.state = []
         for x in relevantElements {
-            state.append(boardState.array[x])
+            state.append(boardState.array[Int(x)])
         }
         self.cost = nil
     }
@@ -52,10 +52,10 @@ public class PatternDatabase {
     var dataArray: [UInt64]
 
     public init(filename: String) throws {
-        let data = try NSData(contentsOfFile: filename, options: NSDataReadingOptions.DataReadingMappedAlways)
+        var data = try NSData(contentsOfFile: filename, options: NSDataReadingOptions.DataReadingMappedAlways)
         dataArray = [UInt64](count: data.length / sizeof(UInt64),  repeatedValue: 0)
         dataArray.withUnsafeMutableBufferPointer({ (inout array: UnsafeMutableBufferPointer<UInt64>) in
-            data.getBytes(array.baseAddress, length: data.length)
+            data.getBytes(array.baseAddress, range: NSMakeRange(16, data.length))
         })
     }
 

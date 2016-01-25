@@ -18,6 +18,14 @@ func ==(lhs: PatternSearchNode, rhs: PatternSearchNode) -> Bool {
     return lhs.state == rhs.state && lhs.cost == rhs.cost
 }
 
+func createPatternDefinition(array: Array<UInt8>) -> UInt64{
+    let pointer = UnsafeMutablePointer<UInt8>.alloc(8)
+    for (i, x) in array[0...6].enumerate() {
+        pointer[i] = x
+    }
+    return UnsafeMutablePointer<UInt64>(pointer)[0]
+}
+
 
 public class PatternFinder {
     let startBoard: BoardState
@@ -32,8 +40,9 @@ public class PatternFinder {
         case Found([BoardState.MoveDirection])
     }
 
-    private func writeToFile(sortedResults: Array<UInt64>, filename: String) {
-        sortedResults.withUnsafeBufferPointer({ (data: UnsafeBufferPointer<UInt64>) in
+    private func writeToFile(sortedResults: Array<UInt64>, filename: String, patternDefinition: Array<UInt8>) {
+        let res = [0x504442464f524d00, createPatternDefinition(patternDefinition)] + sortedResults
+        res.withUnsafeBufferPointer({ (data: UnsafeBufferPointer<UInt64>) in
             let dataObject = NSData(bytesNoCopy: UnsafeMutablePointer<UInt64>(data.baseAddress), length: data.count * sizeof(UInt64))
             do {
                 try dataObject.writeToFile(filename, options: [NSDataWritingOptions.DataWritingWithoutOverwriting])
@@ -43,7 +52,7 @@ public class PatternFinder {
         })
     }
 
-    public func search(size: Int, patternDefinitions: Array<Array<Int>>=[[0,1,2,3,4,8,12]]) {
+    public func search(size: Int, patternDefinitions: Array<Array<UInt8>>=[[0,1,2,3,4,8,12]]) {
         var q = FifoQueue<PatternSearchNode>()
         q.push(PatternSearchNode(cost: 0, state: self.startBoard.packed))
         var visited: Set<PackedBoardState> = [startBoard.packed]
@@ -53,9 +62,6 @@ public class PatternFinder {
             let node = q.pop()!
             let state = BoardState(packed: node.state)
             let cost = node.cost
-            // print(">>> processing state:")
-            // print(state)
-            // print(node)
             for dir in BoardState.MoveDirection.allDirections {
                 do {
                     i += 1
@@ -85,12 +91,14 @@ public class PatternFinder {
                 } catch { }
             }
         }
-        let packed_results = results.map({ $0.map({(pattern: PackedPattern, cost: UInt8)-> UInt64 in
+        var packed_results: [[UInt64]]? = results.map({ $0.map({(pattern: PackedPattern, cost: UInt8)-> UInt64 in
             return UInt64(cost) | pattern
         })})
-        let sorted_results = packed_results.map({ $0.sort() })
+        let sorted_results = packed_results!.map({ $0.sort() })
+        //save some memory, we don't need them now as we have the sorted ones
+        packed_results = nil
         for (i, sorted) in sorted_results.enumerate() {
-            writeToFile(sorted, filename: "\(i)-fringe.data")
+            writeToFile(sorted, filename: "\(i)-fringe.data", patternDefinition: patternDefinitions[i])
         }
     }
 }

@@ -41,7 +41,7 @@ public class BoardSolver {
         let pdb: PatternDatabase
         var max_pdb: Int = 0
         do {
-             pdb = try PatternDatabase(filename: "fringe.data")
+             pdb = try PatternDatabase(filename: "0-fringe.data")
         } catch {
             print("No pdb found.")
             fatalError("No Pattern Database exists")
