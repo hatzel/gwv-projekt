@@ -47,7 +47,7 @@ public class PatternFinder {
         var q = FifoQueue<PatternSearchNode>()
         q.push(PatternSearchNode(cost: 0, state: self.startBoard.packed))
         var visited: Set<PackedBoardState> = [startBoard.packed]
-        var results: Array<Dictionary<PackedPattern, UInt8>> = [[:]]
+        var results: Array<Dictionary<PackedPattern, UInt8>> = Array(count: patternDefinitions.count, repeatedValue: [:])
         var i = 0
         queueLoop: while !q.isEmpty {
             let node = q.pop()!
@@ -60,10 +60,16 @@ public class PatternFinder {
                 do {
                     i += 1
                     if i % 100_000 == 0 {
-                        if results.reduce(r, prev in r.count > size ? prev + 0 : prev + 1) == 0 {
+                        var greater = true
+                        for r in results {
+                            if r.count < size {
+                                greater = false
+                            }
+                        }
+                        if greater {
                             break queueLoop
                         }
-                        print("\u{1b}[2K\rIteration: \(i), Queue size: \(q.count) Patterns found (first pdb): \(results[0].count), Visited: \(visited.count), CurrentDepth: \(cost)", terminator: "")
+                        print("\u{1b}[2K\rIteration: \(i), Queue size: \(q.count) Patterns found: \(results[0].count), Visited: \(visited.count), CurrentDepth: \(cost)", terminator: "")
                         fflush(stdout)
                     }
                     let next = try state.movingEmptyTile(dir)
@@ -74,8 +80,6 @@ public class PatternFinder {
                         let pattern = Pattern(boardState: next, relevantElements: els).packed
                         results[i][pattern] = min(results[i][pattern] ?? UInt8.max, cost)
                     }
-                    // let pattern = Pattern(boardState: next, relevantElements: [0,1,2,3,4,8,12]).packed
-                    // results[pattern] =
 
                     q.push(PatternSearchNode(cost: cost + 1, state: next.packed))
                 } catch { }
