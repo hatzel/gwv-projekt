@@ -32,15 +32,22 @@ public class PatternFinder {
         case Found([BoardState.MoveDirection])
     }
 
-    func fitsPattern(state: BoardState) -> Bool {
-        return false
+    private func writeToFile(sortedResults: Array<UInt64>, filename: String) {
+        sortedResults.withUnsafeBufferPointer({ (data: UnsafeBufferPointer<UInt64>) in
+            let dataObject = NSData(bytesNoCopy: UnsafeMutablePointer<UInt64>(data.baseAddress), length: data.count * sizeof(UInt64))
+            do {
+                try dataObject.writeToFile(filename, options: [NSDataWritingOptions.DataWritingWithoutOverwriting])
+            } catch {
+                fatalError("Can't write Pattern Database to File")
+            }
+        })
     }
 
-    public func search(size: Int) {
+    public func search(size: Int, patternDefinitions: Array<Array<Int>>=[[0,1,2,3,4,8,12]]) {
         var q = FifoQueue<PatternSearchNode>()
         q.push(PatternSearchNode(cost: 0, state: self.startBoard.packed))
         var visited: Set<PackedBoardState> = [startBoard.packed]
-        var results: Dictionary<PackedPattern, UInt8> = [:]
+        var results: Array<Dictionary<PackedPattern, UInt8>> = [[:]]
         var i = 0
         queueLoop: while !q.isEmpty {
             let node = q.pop()!
@@ -53,34 +60,33 @@ public class PatternFinder {
                 do {
                     i += 1
                     if i % 100_000 == 0 {
-                        if results.count > size {
+                        if results.reduce(r, prev in r.count > size ? prev + 0 : prev + 1) == 0 {
                             break queueLoop
                         }
-                        print("\u{1b}[2K\rIteration: \(i), Queue size: \(q.count) Patterns found: \(results.count), Visited: \(visited.count), CurrentDepth: \(cost)", terminator: "")
+                        print("\u{1b}[2K\rIteration: \(i), Queue size: \(q.count) Patterns found (first pdb): \(results[0].count), Visited: \(visited.count), CurrentDepth: \(cost)", terminator: "")
                         fflush(stdout)
                     }
                     let next = try state.movingEmptyTile(dir)
                     guard !visited.contains(next.packed) else { continue }
                     visited.insert(next.packed)
 
-                    let pattern = Pattern(boardState: next, relevantElements: [0,1,2,3,4,8,12]).packed
-                    results[pattern] = min(results[pattern] ?? UInt8.max, cost)
+                    for (i, els) in patternDefinitions.enumerate() {
+                        let pattern = Pattern(boardState: next, relevantElements: els).packed
+                        results[i][pattern] = min(results[i][pattern] ?? UInt8.max, cost)
+                    }
+                    // let pattern = Pattern(boardState: next, relevantElements: [0,1,2,3,4,8,12]).packed
+                    // results[pattern] =
 
                     q.push(PatternSearchNode(cost: cost + 1, state: next.packed))
                 } catch { }
             }
         }
-        var packed_results = results.map {(pattern: PackedPattern, cost: UInt8)-> UInt64 in
+        let packed_results = results.map({ $0.map({(pattern: PackedPattern, cost: UInt8)-> UInt64 in
             return UInt64(cost) | pattern
+        })})
+        let sorted_results = packed_results.map({ $0.sort() })
+        for (i, sorted) in sorted_results.enumerate() {
+            writeToFile(sorted, filename: "\(i)-fringe.data")
         }
-        var sorted_results = packed_results.sort()
-        sorted_results.withUnsafeMutableBufferPointer({ (inout data: UnsafeMutableBufferPointer<UInt64>) in
-            let dataObject = NSData(bytesNoCopy: data.baseAddress, length: data.count * sizeof(UInt64))
-            do {
-                try dataObject.writeToFile("fringe.data", options: [NSDataWritingOptions.DataWritingWithoutOverwriting])
-            } catch {
-                fatalError("Can't write Pattern Database to File")
-            }
-        })
     }
 }
