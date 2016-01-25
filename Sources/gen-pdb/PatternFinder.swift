@@ -66,7 +66,7 @@ public class PatternFinder {
                     // guard !visited.contains(next.packed) else { continue }
                     // visited.insert(next.packed)
 
-                    guard cost < 35 else { continue }
+                    guard Int(cost) < depth else { continue }
                     let pattern = Pattern(boardState: next, relevantElements: [0,1,2,3,4,8,12]).packed
 
 
