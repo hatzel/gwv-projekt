@@ -56,7 +56,10 @@ public class PatternFinder {
                         if results.count > size {
                             break queueLoop
                         }
-                        print("\u{1b}[2K\rIteration: \(i), Queue size: \(q.count) Patterns found: \(results.count)", terminator: "")
+                        let percentage = min(
+                            Double(i)/Double(size),
+                            Double(i)/pow(4.0, Double(depth)))
+                        print("\u{1b}[2K\rIteration: \(i), Queue size: \(q.count) Patterns found: \(results.count), Percentage: \(percentage)", terminator: "")
                         fflush(stdout)
                     }
                     let next = try state.movingEmptyTile(dir)
