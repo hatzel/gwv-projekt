@@ -39,7 +39,7 @@ public class PatternFinder {
         case NotFound
         case Found([BoardState.MoveDirection])
     }
-// 0x504442464f524d00
+
     private func writeToFile(sortedResults: Array<UInt64>, filename: String, patternDefinition: Array<UInt8>) {
         let res = [0x504442464f524d00, createPatternDefinition(patternDefinition)] + sortedResults
         res.withUnsafeBufferPointer({ (data: UnsafeBufferPointer<UInt64>) in
@@ -98,7 +98,7 @@ public class PatternFinder {
         //save some memory, we don't need them now as we have the sorted ones
         packed_results = nil
         for (i, sorted) in sorted_results.enumerate() {
-            writeToFile(sorted, filename: "\(i)-fringe.data", patternDefinition: patternDefinitions[i])
+            writeToFile(sorted, filename: "pattern-\(i).pdb", patternDefinition: patternDefinitions[i])
         }
     }
 }
