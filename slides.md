@@ -40,7 +40,7 @@
 ## Implementation
 * We chose Swift over Python
   * Faster
-  * not as memory-hungry
+  * Not as memory-hungry
   * No true parallelism in Python
   * Learn a fun new language!
 
@@ -66,7 +66,7 @@
 * Used as improved heuristic for A*
 * Minimum steps needed from a given set of nodes to get to goal node
   * Additive
-  * Non additive
+  * Maxing (Non additive)
 
 
 ## Creation
@@ -74,13 +74,19 @@
 * Creation is very space intensive
   * Using BFS is very space intensive
   * DFS is way to slow
+* In practice it turned out that we were constrained more by DFS's speed than BFS's memory usage on our systems
+* We decided to go with BFS
+
 
 ## Reading Databases
 * A database containing 16!/9! ~ 57,000,000 items is ~450MB in size
+* We cant generate more than a few million nodes
+* End up with 8MB of data for a million patterns
 * We load the database into RAM at startup
 * Binary Search to find the costs corresponding to a state
-  * Very fast
-  * O(log(n))
+  * Very fast: O(log(n))
+  * We benefit more from larger PDBs
+
 
 
 ## Outlook
@@ -89,15 +95,22 @@
 * Larger PDBs
 
 
+
 ## Parallelize
 * A* not really fitting for parallelization
+  * Lots of locking
 * IDA however is easy to parallelize
   * Have different threads calculate different levels
+  * Each instance can also be parallelized
   * We have not implemented this yet
 * Issues:
   * Memory usage
   * Locking due to shared data-structures
 
+
+
 ## Benchmarks
 * We solve puzzles in an average time of:
+    TO BE DONE
+* PDBs get us a speedup of:
     TO BE DONE
