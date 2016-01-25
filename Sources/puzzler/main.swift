@@ -26,8 +26,9 @@ func resultOutputForResult(res: BoardSolver.SearchResult) -> String {
 
 let main = command(
     Option("seed", ""),
-    Option("puzzle", "")
-) { seed, puzzle in
+    Option("puzzle", ""),
+    VaradicArgument<String>("databases", description: "PDBs to be used.")
+) { seed, puzzle, dbs in
     let r: RandomGenerator
 
     switch seed {
@@ -56,7 +57,7 @@ let main = command(
     // print(resultOutputForResult(solver.solve()))
 
 
-    let res = solver.solve()
+    let res = solver.solve(dbs)
 
 
 

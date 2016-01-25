@@ -50,7 +50,7 @@ public func ==(lhs: Pattern, rhs: Pattern) -> Bool {
 
 public class PatternDatabase {
     var dataArray: [UInt64]
-    var relevantElements: [UInt8]
+    public var relevantElements: [UInt8]
 
     public init(filename: String) throws {
         let data = try NSData(contentsOfFile: filename, options: NSDataReadingOptions.DataReadingMappedAlways)

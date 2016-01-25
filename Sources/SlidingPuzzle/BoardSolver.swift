@@ -30,7 +30,7 @@ public class BoardSolver {
     }
 
 
-    public func solve() -> SearchResult {
+    public func solve(dbFiles: [String]) -> SearchResult {
         guard startBoard != targetBoard else {
             return .Found([])
         }
@@ -38,12 +38,14 @@ public class BoardSolver {
         let initialDistance = startBoard.sumOfManhattanDistancesTo(targetBoard)
         var q = PriorityQueue(ascending: true, startingValues: [SearchNode(prio: initialDistance, state: startBoard.packed, path: [])])
         var visited: Set<PackedBoardState> = [startBoard.packed]
-        let pdb: PatternDatabase
-        do {
-             pdb = try PatternDatabase(filename: "0-fringe.data")
-        } catch {
-            print("No pdb found.")
-            fatalError("No Pattern Database exists")
+        var pdbs: [PatternDatabase] = Array()
+        for db in dbFiles {
+            do {
+                 let pdb = try PatternDatabase(filename: db)
+                 pdbs.append(pdb)
+            } catch {
+                fatalError("No Pattern Database exists")
+            }
         }
         print("tested nodes: 1", terminator: "")
 
@@ -71,9 +73,12 @@ public class BoardSolver {
                     let path = node.path + [dir]
                     let man = next.sumOfManhattanDistancesTo(targetBoard)
                     var dist: Int = man
-                    if let pdb_heuristic = pdb.search(Pattern(boardState: next, relevantElements: [0,1,2,3,4,8,12])) {
-                        dist = max(man, Int(pdb_heuristic))
+                    for pdb in pdbs {
+                        if let pdb_heuristic = pdb.search(Pattern(boardState: next, relevantElements: pdb.relevantElements)) {
+                            dist = max(dist, Int(pdb_heuristic))
+                        }
                     }
+
                     q.push(SearchNode(prio: dist + path.count, state: next.packed, path: path))
                 } catch { }
             }
