@@ -56,7 +56,7 @@ public class PatternFinder {
                         if results.count > size {
                             break queueLoop
                         }
-                        print("\u{1b}[2K\rIteration: \(i), Queue size: \(q.count) Patterns found: \(results.count), Visited: \(visited.count)", terminator: "")
+                        print("\u{1b}[2K\rIteration: \(i), Queue size: \(q.count) Patterns found: \(results.count), Visited: \(visited.count), CurrentDepth: \(cost)", terminator: "")
                         fflush(stdout)
                     }
                     let next = try state.movingEmptyTile(dir)
@@ -77,9 +77,8 @@ public class PatternFinder {
         packed_results.withUnsafeMutableBufferPointer({ (inout data: UnsafeMutableBufferPointer<UInt64>) in
             let dataObject = NSData(bytesNoCopy: data.baseAddress, length: data.count * sizeof(UInt64))
             do {
-                try dataObject.writeToFile("test.data", options: [NSDataWritingOptions.DataWritingAtomic])
+                try dataObject.writeToFile("test.data", options: [NSDataWritingOptions.DataWritingWithoutOverwriting])
             } catch {
-                print(error)
                 fatalError("Can't write Pattern Database to File")
             }
         })
