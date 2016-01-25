@@ -72,8 +72,8 @@ public class PatternDatabase {
             return nil
         }
         let middleValue = slice[slice.startIndex + slice.count / 2]
-        let pattern = inPattern >> 8
-        let compareValue = middleValue >> 8
+        let pattern = (inPattern >> 8) << 8
+        let compareValue = (middleValue >> 8) << 8
         if compareValue == pattern {
             return UInt8(truncatingBitPattern: middleValue)
         }

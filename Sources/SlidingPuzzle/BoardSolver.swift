@@ -39,6 +39,7 @@ public class BoardSolver {
         var q = PriorityQueue(ascending: true, startingValues: [SearchNode(prio: initialDistance, state: startBoard, path: [])])
         var visited: Set<BoardState> = [startBoard]
         let pdb: PatternDatabase
+        var max_pdb: Int = 0
         do {
              pdb = try PatternDatabase(filename: "fringe.data")
         } catch {
@@ -76,6 +77,8 @@ public class BoardSolver {
                         //     print("MD: \(dist), pdb: \(pdb_heuristic)")
                         // }
                         dist = max(man, Int(pdb_heuristic))
+                        max_pdb = max(max_pdb, Int(pdb_heuristic))
+                        // print(max_pdb)
                     }
                     // print(Repeat(count: dist, repeatedValue: "█").joinWithSeparator("") + " - \(dist)")
                     q.push(SearchNode(prio: dist + path.count, state: next, path: path))

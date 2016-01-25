@@ -64,7 +64,7 @@ public class PatternFinder {
                     visited.insert(next.packed)
 
                     let pattern = Pattern(boardState: next, relevantElements: [0,1,2,3,4,8,12]).packed
-                    results[pattern] = cost + 1
+                    results[pattern] = min(results[pattern] ?? UInt8.max, cost)
 
                     q.push(PatternSearchNode(cost: cost + 1, state: next.packed))
                 } catch { }
