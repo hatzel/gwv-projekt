@@ -72,12 +72,8 @@
 ## Creation
 * We search from goal node and store found patterns
 * Creation is very space intensive
-  * Optimization wouldn't enable us to use BFS
-    * We managed to cut memory usage in half
-    * Queue size was still getting to large
-  * We chose to go with DFS up to a specified depth
-    * Slower but takes less space
-
+  * Using BFS is very space intensive
+  * DFS is way to slow
 
 ## Reading Databases
 * A database containing 16!/9! ~ 57,000,000 items is ~450MB in size
