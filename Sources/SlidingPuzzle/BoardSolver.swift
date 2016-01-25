@@ -40,8 +40,9 @@ public class BoardSolver {
         var visited: Set<BoardState> = [startBoard]
         let pdb: PatternDatabase
         do {
-             pdb = try PatternDatabase(filename: "test.data")
+             pdb = try PatternDatabase(filename: "fringe.data")
         } catch {
+            print("No pdb found.")
             fatalError("No Pattern Database exists")
         }
         print("tested nodes: 1", terminator: "")
@@ -68,12 +69,13 @@ public class BoardSolver {
                     }
 
                     let path = node.path + [dir]
-                    var dist = next.sumOfManhattanDistancesTo(targetBoard)
+                    let man = next.sumOfManhattanDistancesTo(targetBoard)
+                    var dist: Int = man
                     if let pdb_heuristic = pdb.search(Pattern(boardState: next, relevantElements: [0,1,2,3,4,8,12])) {
                         // if Int(pdb_heuristic) > dist {
                         //     print("MD: \(dist), pdb: \(pdb_heuristic)")
                         // }
-                        dist = max(dist, Int(pdb_heuristic))
+                        dist = max(man, Int(pdb_heuristic))
                     }
                     // print(Repeat(count: dist, repeatedValue: "█").joinWithSeparator("") + " - \(dist)")
                     q.push(SearchNode(prio: dist + path.count, state: next, path: path))

@@ -73,11 +73,11 @@ public class PatternFinder {
         var packed_results = results.map {(pattern: PackedPattern, cost: UInt8)-> UInt64 in
             return UInt64(cost) | pattern
         }
-        packed_results = packed_results.sort()
-        packed_results.withUnsafeMutableBufferPointer({ (inout data: UnsafeMutableBufferPointer<UInt64>) in
+        var sorted_results = packed_results.sort()
+        sorted_results.withUnsafeMutableBufferPointer({ (inout data: UnsafeMutableBufferPointer<UInt64>) in
             let dataObject = NSData(bytesNoCopy: data.baseAddress, length: data.count * sizeof(UInt64))
             do {
-                try dataObject.writeToFile("test.data", options: [NSDataWritingOptions.DataWritingWithoutOverwriting])
+                try dataObject.writeToFile("fringe.data", options: [NSDataWritingOptions.DataWritingWithoutOverwriting])
             } catch {
                 fatalError("Can't write Pattern Database to File")
             }

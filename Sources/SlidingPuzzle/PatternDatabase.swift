@@ -14,17 +14,20 @@ public struct Pattern: Hashable {
         self.cost = nil
     }
 
-    // init()
+    // init(pattern: PackedPattern) {
+    //
+    // }
 
     public func serialize(cost: UInt8? = nil) -> UInt64 {
         let pointer = UnsafeMutablePointer<UInt8>.alloc(8)
         for (i, x) in self.state.enumerate() {
             pointer[i + 1] = x
         }
+        pointer[0] = UInt8(cost ?? self.cost ?? 0)
         let long_pointer = UnsafeMutablePointer<UInt64>(pointer)
         defer { long_pointer.dealloc(1) }
         // print("state: \(self.state), cost: \(cost!), serialized: \(UInt64(cost ?? self.cost ?? 0) | long_pointer[0] >> 8)")
-        return UInt64(cost ?? self.cost ?? 0) | long_pointer[0]
+        return long_pointer[0]
     }
 
     public var packed: PackedPattern {
@@ -51,7 +54,9 @@ public class PatternDatabase {
     public init(filename: String) throws {
         let data = try NSData(contentsOfFile: filename, options: NSDataReadingOptions.DataReadingMappedAlways)
         dataArray = [UInt64](count: data.length / sizeof(UInt64),  repeatedValue: 0)
-        data.getBytes(&dataArray, length: data.length)
+        dataArray.withUnsafeMutableBufferPointer({ (inout array: UnsafeMutableBufferPointer<UInt64>) in
+            data.getBytes(array.baseAddress, length: data.length)
+        })
     }
 
     public func search(pattern: Pattern) -> UInt8? {
