@@ -3,7 +3,7 @@ import Glibc
 
 private struct SearchNode {
     let prio: Int
-    let state: BoardState
+    let state: PackedBoardState
     let path: [BoardState.MoveDirection]
 }
 
@@ -36,8 +36,8 @@ public class BoardSolver {
         }
 
         let initialDistance = startBoard.sumOfManhattanDistancesTo(targetBoard)
-        var q = PriorityQueue(ascending: true, startingValues: [SearchNode(prio: initialDistance, state: startBoard, path: [])])
-        var visited: Set<BoardState> = [startBoard]
+        var q = PriorityQueue(ascending: true, startingValues: [SearchNode(prio: initialDistance, state: startBoard.packed, path: [])])
+        var visited: Set<PackedBoardState> = [startBoard.packed]
         let pdb: PatternDatabase
         var max_pdb: Int = 0
         do {
@@ -50,14 +50,14 @@ public class BoardSolver {
 
         queueLoop: while !q.isEmpty {
             let node = q.pop()!
-            let state = node.state
+            let state = BoardState(packed: node.state)
 
             for dir in BoardState.MoveDirection.allDirections {
                 do {
                     let next = try state.movingEmptyTile(dir)
 
-                    guard !visited.contains(next) else { continue }
-                    visited.insert(next)
+                    guard !visited.contains(next.packed) else { continue }
+                    visited.insert(next.packed)
 
                     guard next != targetBoard else {
                         return .Found(node.path + [dir])
@@ -81,7 +81,7 @@ public class BoardSolver {
                         // print(max_pdb)
                     }
                     // print(Repeat(count: dist, repeatedValue: "█").joinWithSeparator("") + " - \(dist)")
-                    q.push(SearchNode(prio: dist + path.count, state: next, path: path))
+                    q.push(SearchNode(prio: dist + path.count, state: next.packed, path: path))
                 } catch { }
             }
         }
