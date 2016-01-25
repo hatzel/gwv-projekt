@@ -39,7 +39,7 @@ public class PatternFinder {
         case NotFound
         case Found([BoardState.MoveDirection])
     }
-
+// 0x504442464f524d00
     private func writeToFile(sortedResults: Array<UInt64>, filename: String, patternDefinition: Array<UInt8>) {
         let res = [0x504442464f524d00, createPatternDefinition(patternDefinition)] + sortedResults
         res.withUnsafeBufferPointer({ (data: UnsafeBufferPointer<UInt64>) in

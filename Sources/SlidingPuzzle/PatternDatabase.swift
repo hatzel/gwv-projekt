@@ -50,10 +50,21 @@ public func ==(lhs: Pattern, rhs: Pattern) -> Bool {
 
 public class PatternDatabase {
     var dataArray: [UInt64]
+    var relevantElements: [UInt8]
 
     public init(filename: String) throws {
-        var data = try NSData(contentsOfFile: filename, options: NSDataReadingOptions.DataReadingMappedAlways)
+        let data = try NSData(contentsOfFile: filename, options: NSDataReadingOptions.DataReadingMappedAlways)
         dataArray = [UInt64](count: data.length / sizeof(UInt64),  repeatedValue: 0)
+        // I dont understand why NSData copys more than it should, workaround below
+        var rlElements: Array<UInt8> = Array(count: 20, repeatedValue: 0)
+        rlElements.withUnsafeMutableBufferPointer({ (inout array: UnsafeMutableBufferPointer<UInt8>) in
+            data.getBytes(array.baseAddress, range: NSMakeRange(8, 16))
+        })
+        // so this is a workaround
+        relevantElements = Array(count: 7, repeatedValue: 0)
+        for (i, x) in rlElements[0...6].enumerate() {
+            relevantElements[i] = x;
+        }
         dataArray.withUnsafeMutableBufferPointer({ (inout array: UnsafeMutableBufferPointer<UInt64>) in
             data.getBytes(array.baseAddress, range: NSMakeRange(16, data.length))
         })
