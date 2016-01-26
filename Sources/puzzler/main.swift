@@ -39,7 +39,6 @@ let main = command(
     var solvedBoard = BoardState()
 
 
-
     var startBoard: BoardState
 
     if puzzle == "" {
@@ -53,10 +52,6 @@ let main = command(
     print(preflightDebugOutput(target: solvedBoard, start: startBoard))
 
     let solver = BoardSolver(startBoard: startBoard, targetBoard: solvedBoard)
-
-    // print(resultOutputForResult(solver.solve()))
-
-
     let res = solver.solve(dbs)
 
 

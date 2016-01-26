@@ -39,6 +39,8 @@ public class BoardSolver {
         var q = PriorityQueue(ascending: true, startingValues: [SearchNode(prio: initialDistance, state: startBoard.packed, path: [])])
         var visited: Set<PackedBoardState> = [startBoard.packed]
         var pdbs: [PatternDatabase] = Array()
+        var pdb_used = 0
+        var manhatten_used = 0
         for db in dbFiles {
             do {
                  let pdb = try PatternDatabase(filename: db)
@@ -66,17 +68,23 @@ public class BoardSolver {
 
                     visitedNodes += 1
                     if visitedNodes % 10000 == 0 {
-                        print("\u{1b}[2K\rtested nodes: \(visitedNodes)", terminator: "")
+                        print("\u{1b}[2K\rtested nodes: \(visitedNodes), Manhatten usages: \(manhatten_used), PDB used: \(pdb_used)", terminator: "")
                         fflush(stdout)
                     }
 
                     let path = node.path + [dir]
                     let man = next.sumOfManhattanDistancesTo(targetBoard)
                     var dist: Int = man
-                    for pdb in pdbs {
+                    for (i, pdb) in pdbs.enumerate() {
                         if let pdb_heuristic = pdb.search(Pattern(boardState: next, relevantElements: pdb.relevantElements)) {
                             dist = max(dist, Int(pdb_heuristic))
+                            // print("Manhatten: \(dist), PDB-\(i): \(pdb_heuristic)")
                         }
+                    }
+                    if dist != man {
+                        pdb_used += 1
+                    } else {
+                        manhatten_used += 1
                     }
 
                     q.push(SearchNode(prio: dist + path.count, state: next.packed, path: path))
