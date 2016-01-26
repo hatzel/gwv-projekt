@@ -34,6 +34,7 @@
 * Slower than A*
 * Less space complexity
 * Potential for parallelism
+* We decided to use A* since memory consumption wasn't a factor
 
 
 
@@ -43,6 +44,40 @@
   * Not as memory-hungry
   * No true parallelism in Python
   * Learn a fun new language!
+
+
+
+## Heuristics
+* Manhatten distance
+* Pattern Databases
+* both are admissible and therfore our implementation should yield perfect paths
+
+
+
+## Pattern Databases (PDBs)
+* Used as improved heuristic for A*
+* Minimum steps needed from a given set of nodes to get to goal node
+* Additive
+* Maxing (Non additive)
+
+
+## Creation
+* We search from goal node and store found patterns
+* Creation is very space intensive
+* Using BFS is very space intensive
+* DFS is way to slow
+* In practice it turned out that we were constrained more by DFS's speed than BFS's memory usage on our systems
+* We decided to go with BFS
+
+
+## Reading Databases
+* A database containing 16!/9! ~ 57,000,000 items is ~450MB in size
+* We cant generate more than a few million nodes
+* End up with 8MB of data for a million patterns
+* We load the database into RAM at startup
+* Binary Search to find the costs corresponding to a state
+* Very fast: O(log(n))
+* We should benefit more from larger PDBs
 
 
 
@@ -59,40 +94,6 @@
 * 'packing' board states
   * One board state is an integer (64-bit)
   * This way we save a lot of memory
-
-
-
-## Pattern Databases (PDBs)
-* Used as improved heuristic for A*
-* Minimum steps needed from a given set of nodes to get to goal node
-  * Additive
-  * Maxing (Non additive)
-
-
-## Creation
-* We search from goal node and store found patterns
-* Creation is very space intensive
-  * Using BFS is very space intensive
-  * DFS is way to slow
-* In practice it turned out that we were constrained more by DFS's speed than BFS's memory usage on our systems
-* We decided to go with BFS
-
-
-## Reading Databases
-* A database containing 16!/9! ~ 57,000,000 items is ~450MB in size
-* We cant generate more than a few million nodes
-* End up with 8MB of data for a million patterns
-* We load the database into RAM at startup
-* Binary Search to find the costs corresponding to a state
-  * Very fast: O(log(n))
-  * We benefit more from larger PDBs
-
-
-
-## Outlook
-* Parallelization
-* Additive PDBs
-* Larger PDBs
 
 
 
@@ -114,3 +115,10 @@
     TO BE DONE
 * PDBs get us a speedup of:
     TO BE DONE
+
+
+
+## Outlook
+* Parallelization
+* Additive PDBs
+* Larger PDBs
