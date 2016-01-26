@@ -115,10 +115,16 @@
     TO BE DONE
 * PDBs get us a speedup of:
     TO BE DONE
+    
 
 
-
-## Outlook
+## Future Improvments
 * Parallelization
-* Additive PDBs
 * Larger PDBs
+* Additive PDBs
+
+
+
+# Sources
+* [1] Joseph C. Culberson and Jonathan Schaeffer (1998) [Pattern Databases](https://webdocs.cs.ualberta.ca/~jonathan/publications/ai_publications/compi.pdf)
+* [2] Ariel Felner, Richard E. Korf and Sarit Hanan (2004) [Additive Pattern Database Heuristics](https://www.jair.org/media/1480/live-1480-2332-jair.pdf)
