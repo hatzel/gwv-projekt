@@ -107,11 +107,19 @@ for (i, x) in self.array.enumerate() {
 ```
 
 
+
 ## Benchmarks
 * Sample size: 25
 * Both benchmarks solved the same puzzles (same random seeds)
-* We solve puzzles (using PDBs) in an average time of: 193s
-* PDBs get us a speedup of: TO BE DONE
+* We solve puzzles (using PDBs) in an average time of: 209s
+* We solve puzzles (without PDBs) in an average time of: 117s
+
+
+## Why is that?
+* Possibly an implementation mistake?
+* Does binary search take to long for small data?
+* Explored node count is smaller:
+    No PDBS: 2116250 PDBs: 1912500
 
 
 
