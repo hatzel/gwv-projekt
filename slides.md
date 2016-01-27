@@ -55,6 +55,7 @@
 
 
 ## Pattern Databases (PDBs)
+![](img/15-puzzle-fringe.png)
 * Used as improved heuristic for A*
 * Minimum steps needed from a given set of nodes to get to goal node
 * Additive
@@ -85,6 +86,9 @@
 * First measure: Algorithms
 * Build options
   * Release builds get us a speedup of ~10
+  ```
+  swift build -c release
+  ```
 * micro optimizations
   * 'packing' board states
 
@@ -95,6 +99,26 @@
   * One board state is an integer (64-bit)
   * This way we save a lot of memory
 
+```
+var ret: PackedBoardState = 0
+for (i, x) in self.array.enumerate() {
+    ret |= PackedBoardState(x) << 4 * i
+}
+```
+
+
+## Benchmarks
+* We solve puzzles in an average time of:
+    TO BE DONE
+* PDBs get us a speedup of:
+    TO BE DONE
+
+
+
+## Future Improvments
+* Parallelization
+* Larger PDBs
+* Additive PDBs
 
 
 ## Parallelize
@@ -107,21 +131,6 @@
 * Issues:
   * Memory usage
   * Locking due to shared data-structures
-
-
-
-## Benchmarks
-* We solve puzzles in an average time of:
-    TO BE DONE
-* PDBs get us a speedup of:
-    TO BE DONE
-    
-
-
-## Future Improvments
-* Parallelization
-* Larger PDBs
-* Additive PDBs
 
 
 
