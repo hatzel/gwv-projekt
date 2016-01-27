@@ -108,10 +108,10 @@ for (i, x) in self.array.enumerate() {
 
 
 ## Benchmarks
-* We solve puzzles in an average time of:
-    TO BE DONE
-* PDBs get us a speedup of:
-    TO BE DONE
+* Sample size: 25
+* Both benchmarks solved the same puzzles (same random seeds)
+* We solve puzzles (using PDBs) in an average time of: 193s
+* PDBs get us a speedup of: TO BE DONE
 
 
 
