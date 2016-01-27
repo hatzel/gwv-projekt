@@ -4,11 +4,11 @@
 
 
 ## Structure
-* Algorithms
-* Implementation
-* Pattern Databases
-* Parallelism
-* Outlook/Conclusion
+1. Algorithms
+2. Implementation
+3. Pattern Databases
+4. Parallelism
+5. Possible Improvements
 
 
 
@@ -83,13 +83,13 @@
 
 
 ## Optimizations
-* First measure: Algorithms
-* Build options
+1. Optimize algorithms
+2. Build options
   * Release builds get us a speedup of ~10
   ```
   swift build -c release
   ```
-* micro optimizations
+3. micro optimizations
   * 'packing' board states
 
 
@@ -115,7 +115,7 @@ for (i, x) in self.array.enumerate() {
 
 
 
-## Future Improvments
+## Possible Improvments
 * Parallelization
 * Larger PDBs
 * Additive PDBs
