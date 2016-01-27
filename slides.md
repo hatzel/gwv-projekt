@@ -119,7 +119,8 @@ for (i, x) in self.array.enumerate() {
 * Possibly an implementation mistake?
 * Does binary search take to long for small data?
 * Explored node count is smaller:
-    No PDBS: 2116250 PDBs: 1912500
+  * No PDBS: 2116250 
+  * PDBs: 1912500
 
 
 
